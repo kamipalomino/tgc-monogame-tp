@@ -60,8 +60,11 @@ namespace TGC.MonoGame.TP
             // Seria hasta aca.
 
             // Configuramos nuestras matrices de la escena.
-            World = Matrix.Identity;
-            View = Matrix.CreateLookAt(Vector3.UnitZ * 150, Vector3.Zero, Vector3.Up);
+            World = Matrix.Identity; // identidad
+            View = Matrix.CreateLookAt(Vector3.UnitZ * 150, Vector3.Zero, Vector3.Up); //camara
+            /*
+                angulos de apertura de la camara 
+            */
             Projection =
                 Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 250);
 
@@ -73,7 +76,7 @@ namespace TGC.MonoGame.TP
         ///     Escribir aqui el codigo de inicializacion: cargar modelos, texturas, estructuras de optimizacion, el procesamiento
         ///     que podemos pre calcular para nuestro juego.
         /// </summary>
-        protected override void LoadContent()
+        protected override void LoadContent() // cargo todo el contenido
         {
             // Aca es donde deberiamos cargar todos los contenido necesarios antes de iniciar el juego.
             SpriteBatch = new SpriteBatch(GraphicsDevice);
@@ -108,7 +111,23 @@ namespace TGC.MonoGame.TP
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 //Salgo del juego.
                 Exit();
+            
+            //
+            var elapsedTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
+            Position += Vector3.Up * elapsedTime *5f; // va a depender segun el tiempo de upgrade
+            
 
+
+
+            var quaternion = Quaternion.CreateFromAxisAngle(Vector3.Up,MathF.PI);
+
+
+
+            // new Vector3(0.2f,0.2f,0.2f)
+            World = Matrix.CreateScale(0.2f)
+            //   * Matrix.CreateRotationY(MathF.PI)
+                * Matrix.CreateFromQuaternion(quaternion)
+                * Matrix.CreateTranslation(Position);
             // Basado en el tiempo que paso se va generando una rotacion.
             Rotation += Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
 
