@@ -42,6 +42,9 @@ namespace TGC.MonoGame.TP
         private Matrix World { get; set; }
         private Matrix View { get; set; }
         private Matrix Projection { get; set; }
+        private Vector3 Position {get; set; }= Vector3.Zero;
+
+        private Logo Logo {get; set; }
 
         /// <summary>
         ///     Se llama una sola vez, al principio cuando se ejecuta el ejemplo.
@@ -81,12 +84,16 @@ namespace TGC.MonoGame.TP
             // Aca es donde deberiamos cargar todos los contenido necesarios antes de iniciar el juego.
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // Cargo el modelo del logo.
+             // Cargo el modelo del logo.
             Model = Content.Load<Model>(ContentFolder3D + "tgc-logo/tgc-logo");
 
             // Cargo un efecto basico propio declarado en el Content pipeline.
             // En el juego no pueden usar BasicEffect de MG, deben usar siempre efectos propios.
             Effect = Content.Load<Effect>(ContentFolderEffects + "BasicShader");
+ 
+
+            Logo = new Logo();
+            Logo.LoadContent(Effect,Model);
 
             // Asigno el efecto que cargue a cada parte del mesh.
             // Un modelo puede tener mas de 1 mesh internamente.
@@ -112,25 +119,21 @@ namespace TGC.MonoGame.TP
                 //Salgo del juego.
                 Exit();
             
-            //
-            var elapsedTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
-            Position += Vector3.Up * elapsedTime *5f; // va a depender segun el tiempo de upgrade
-            
+            /** 
+            * ! var elapsedTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
+            * ! Position += Vector3.Up * elapsedTime *5f; // va a depender segun el tiempo de upgrade
+            * var quaternion = Quaternion.CreateFromAxisAngle(Vector3.Up,MathF.PI)
+            *  // new Vector3(0.2f,0.2f,0.2f)
+            * ? World = Matrix.CreateScale(0.2f)
+            * //    * Matrix.CreateRotationY(MathF.PI)
+            *  ? * Matrix.CreateFromQuaternion(quaternion)
+            *  ? * Matrix.CreateTranslation(Position);
+            */
 
-
-
-            var quaternion = Quaternion.CreateFromAxisAngle(Vector3.Up,MathF.PI);
-
-
-
-            // new Vector3(0.2f,0.2f,0.2f)
-            World = Matrix.CreateScale(0.2f)
-            //   * Matrix.CreateRotationY(MathF.PI)
-                * Matrix.CreateFromQuaternion(quaternion)
-                * Matrix.CreateTranslation(Position);
             // Basado en el tiempo que paso se va generando una rotacion.
             Rotation += Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
 
+            Logo.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -143,18 +146,20 @@ namespace TGC.MonoGame.TP
             // Aca deberiamos poner toda la logia de renderizado del juego.
             GraphicsDevice.Clear(Color.Black);
 
-            // Para dibujar le modelo necesitamos pasarle informacion que el efecto esta esperando.
-            Effect.Parameters["View"].SetValue(View);
-            Effect.Parameters["Projection"].SetValue(Projection);
-            Effect.Parameters["DiffuseColor"].SetValue(Color.DarkBlue.ToVector3());
-            var rotationMatrix = Matrix.CreateRotationY(Rotation);
+            Logo.Draw(gameTime, View,Projection);
+            /*/ Para dibujar le modelo necesitamos pasarle informacion que el efecto esta esperando.
+                    Effect.Parameters["View"].SetValue(View);
+                    Effect.Parameters["Projection"].SetValue(Projection);
+                    Effect.Parameters["DiffuseColor"].SetValue(Color.DarkBlue.ToVector3());
+                var rotationMatrix = Matrix.CreateRotationY(Rotation);
 
-            foreach (var mesh in Model.Meshes)
-            {
-                World = mesh.ParentBone.Transform * rotationMatrix;
-                Effect.Parameters["World"].SetValue(World);
-                mesh.Draw();
-            }
+                foreach (var mesh in Model.Meshes)
+                {
+                    World = mesh.ParentBone.Transform * rotationMatrix;
+                    Effect.Parameters["World"].SetValue(World);
+                    mesh.Draw();
+                } 
+                 */
         }
 
         /// <summary>
