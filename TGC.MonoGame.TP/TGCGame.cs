@@ -115,7 +115,7 @@ namespace TGC.MonoGame.TP
             // Aca deberiamos poner toda la logica de actualizacion del juego.
 
             // Capturar Input teclado
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Space))
                 //Salgo del juego.
                 Exit();
             
@@ -131,7 +131,7 @@ namespace TGC.MonoGame.TP
             */
 
             // Basado en el tiempo que paso se va generando una rotacion.
-            Rotation += Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
+           // Rotation += Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
 
             Logo.Update(gameTime);
             base.Update(gameTime);

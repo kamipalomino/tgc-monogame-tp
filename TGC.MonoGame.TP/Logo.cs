@@ -1,19 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace TGC.MonoGame.TP
 {
     class Logo
     {
-        private Vector3 Position {get; set; }= Vector3.Zero;
+        public Vector3 Position {get; set; }= Vector3.Zero;
+
         private Model Model { get; set; }
         private Effect Effect { get; set; }
         
         private float Timer {get; set; } =0f;
-
+        private float Rotation { get; set; }
         private float Duracion {get; set; }= 3f; 
-        public Matrix Wold {get; private set; }
+        public Matrix World {get;  private set; }
+        private Matrix Mundo {get;  set; }
 
         /** 
         * ? para mover de un lugar A a otro B 
@@ -28,39 +33,35 @@ namespace TGC.MonoGame.TP
             // Cargo el modelo del logo.
             Model = model;
             Effect= effect;
+            World = Matrix.Identity;
         }
 
 
         public void Update(GameTime gameTime){
 
-            var elapsedTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
+            float elapsedTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
             Timer +=elapsedTime;
-            
+
             /**
             * ? Se detiene despues cuando llega a los 3 seg
             * va a depender segun el tiempo de upgrade
             */
-          //  if(Timer <= Duracion)
-            //    Position += Vector3.Up * elapsedTime * 5f; 
+          //   if(Timer <= Duracion)
+                Position += Vector3.Up * elapsedTime * 5f; 
 
-            Position = Vector3.Lerp(A,B,MathF.Min(Timer *0.1f,1f));
-
-
-
+           // Position=Vector3.Lerp(A,B,MathF.Min(Timer *0.1f,1f));
 
             var quaternion = Quaternion.CreateFromAxisAngle(Vector3.Up,MathF.PI); //  timer 
 
 
-
             // new Vector3(0.2f,0.2f,0.2f)
-            World = Matrix.CreateScale(0.2f) //puedo poner el timer aca
-            //   * Matrix.CreateRotationY(MathF.PI)
-                * Matrix.CreateFromQuaternion(quaternion)
-                * Matrix.CreateTranslation(Position);
-            // Basado en el tiempo que paso se va generando una rotacion.
-            Rotation += Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
+            //puedo poner el timer aca  
+              // World = Matrix.CreateScale(2f) * Matrix.CreateFromQuaternion(quaternion) * Matrix.CreateTranslation(Position);
+              World = Matrix.CreateScale(2f) * Matrix.CreateRotationY(MathF.PI) * Matrix.CreateTranslation(B);
+             // Basado en el tiempo que paso se va generando una rotacion.
+               Rotation += Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
 
-            base.Update(gameTime);
+           // base.Update(gameTime);
 
         } 
         public void Draw(GameTime gameTime, Matrix view, Matrix projection){
